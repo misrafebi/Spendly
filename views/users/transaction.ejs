@@ -1,0 +1,87 @@
+<%- include('../partials/user/navbar') %>
+<%- include('../partials/user/sidebar') %>
+            <div class="main" style="position:relative;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div class="page-title">Transactions</div>
+                    </div>
+                    <div class="btn btn-primary">+ Add Transaction</div>
+                </div>
+
+                <div class="card wf-box"
+                    style="margin-bottom:16px;padding:14px 18px;display:flex;gap:14px;align-items:center;position:relative;">
+                    <div class="pill-toggle">
+                        <div class="off">Income</div>
+                        <div class="on">Expense</div>
+                    </div>
+                    <div class="form-input" style="width:140px;">Amount</div>
+                    <div class="form-input" style="width:160px;">Category ▾</div>
+                    <div class="form-input" style="width:150px;">Date</div>
+                    <div class="form-input" style="width:220px;">Note (optional)</div>
+                    <div class="btn btn-primary btn-sm">Save</div>
+                </div>
+
+                <div class="card" style="position:relative;">
+                    <table>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Note</th>
+                            <th>Type</th>
+                            <th style="text-align:right;">Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr>
+                            <td>Jul 18, 2026</td>
+                            <td>Groceries</td>
+                            <td>Weekly shopping</td>
+                            <td><span class="badge expense">Expense</span></td>
+                            <td style="text-align:right;">₹1,200</td>
+                            <td><span style="color:#2d6cdf;">Edit</span> &nbsp; <span
+                                    style="color:#d64545;">Delete</span></td>
+                        </tr>
+                        <tr>
+                            <td>Jul 15, 2026</td>
+                            <td>Salary</td>
+                            <td>July salary</td>
+                            <td><span class="badge income">Income</span></td>
+                            <td style="text-align:right;">₹42,000</td>
+                            <td><span style="color:#2d6cdf;">Edit</span> &nbsp; <span
+                                    style="color:#d64545;">Delete</span></td>
+                        </tr>
+                        <tr>
+                            <td>Jul 14, 2026</td>
+                            <td>Electricity</td>
+                            <td>—</td>
+                            <td><span class="badge expense">Expense</span></td>
+                            <td style="text-align:right;">₹950</td>
+                            <td><span style="color:#2d6cdf;">Edit</span> &nbsp; <span
+                                    style="color:#d64545;">Delete</span></td>
+                        </tr>
+                        <tr>
+                            <td>Jul 12, 2026</td>
+                            <td>Petrol</td>
+                            <td>—</td>
+                            <td><span class="badge expense">Expense</span></td>
+                            <td style="text-align:right;">₹800</td>
+                            <td><span style="color:#2d6cdf;">Edit</span> &nbsp; <span
+                                    style="color:#d64545;">Delete</span></td>
+                        </tr>
+                        <tr>
+                            <td>Jul 10, 2026</td>
+                            <td>Freelance</td>
+                            <td>Logo design</td>
+                            <td><span class="badge income">Income</span></td>
+                            <td style="text-align:right;">₹5,000</td>
+                            <td><span style="color:#2d6cdf;">Edit</span> &nbsp; <span
+                                    style="color:#d64545;">Delete</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -11,22 +11,22 @@
 <body>
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6 text-center">
+            <!-- <div class="col-md-6 text-center">
                 <h1>Error Page</h1>
                 <p>An error occurred. Please try again later.</p>
                 <a href="/user/login" class="btn btn-primary">Go to Login Page</a>
-            </div>
+            </div> -->
         </div>
     </div>
-   
 
-            <script>
-                const urlparams = new URLSearchParams(window.location.search)
-                const message = urlparams.get('message')
-                if (message) {
-                    alert(message)
-                }
-            </script>
+
+    <script>
+        const urlparams = new URLSearchParams(window.location.search)
+        const message = urlparams.get('message')
+        if (message) {
+            alert(message)
+        }
+    </script>
 </body>
 
 </html>
