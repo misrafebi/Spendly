@@ -19,7 +19,7 @@ body {
 .label-tag {
   position: absolute;
   top: -11px;
-  left: 10px;
+  left: 10px; 
   background: #4a5568;
   color: #fff;
   font-size: 11px;

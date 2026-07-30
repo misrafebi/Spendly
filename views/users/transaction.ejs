@@ -1,3 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <style>
+     * { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #eef1f5;
+  width: 1200px;
+}
+.wf-box {
+  border: 1.5px dashed #9aa3af;
+  background: #ffffff;
+}
+ .page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2d3e50;
+  margin-bottom: 4px;
+}
+.card {
+  background: #fff;
+  border: 1px solid #e2e6ec;
+  border-radius: 6px;
+  padding: 18px;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  text-align: left;
+  background: #f1f3f6;
+  padding: 10px 12px;
+  color: #5a6472;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e6ec;
+}
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eef0f3;
+  color: #3a4453;
+}
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge.income { background: #e3f7ea; color: #2f9e5e; }
+.badge.expense { background: #fbe6e6; color: #d64545; }
+
+.btn {
+  display: inline-block;
+  padding: 9px 18px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+.btn-primary { background: #2d6cdf; color: #fff; }
+.btn-secondary { background: #fff; color: #2d3e50; border: 1px solid #d6dbe3; }
+.btn-danger { background: #fdeaea; color: #d64545; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 13px; font-weight: 600; color: #3a4453; margin-bottom: 6px; display: block; }
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d6dbe3;
+  border-radius: 5px;
+  font-size: 13px;
+  color: #8a94a3;
+  background: #fff;
+}
+
+.pill-toggle {
+  display: inline-flex;
+  border: 1px solid #d6dbe3;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.pill-toggle div { padding: 6px 18px; font-size: 12px; font-weight: 600; }
+.pill-toggle .on { background: #2d6cdf; color: #fff; }
+.pill-toggle .off { color: #8a94a3; }
+   </style>
+</head>
+
+<body>
 <%- include('../partials/user/navbar') %>
 <%- include('../partials/user/sidebar') %>
             <div class="main" style="position:relative;">
@@ -21,7 +111,7 @@
                     <div class="btn btn-primary btn-sm">Save</div>
                 </div>
 
-                <div class="card" style="position:relative;">
+                 <div class="card" style="position:relative;">
                     <table>
                         <tr>
                             <th>Date</th>

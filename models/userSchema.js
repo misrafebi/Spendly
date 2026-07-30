@@ -4,24 +4,28 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        lowercase: true,
+        trim: true
     },
     password: {
         type: String,
-        required: true
+        required: false // password is not required for Google login users
     },
     gooleId: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true // allows many users to have no googleId without violating uniqueness
     },
-    password:{
-        type: String,
-        required: false
+    isVerified: {
+        type: Boolean,
+        default: false // flips to true after OTP verification succeeds
     },
     isBlocked: {
         type: Boolean,
@@ -31,27 +35,13 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    category: [{
-        type:Schema.Types.ObjectId,
-        ref:'Category'
-    }],
-    createdOn:{
-        type:Date,
-        default:Date.now
+    createdOn: {
+        type: Date,
+        default: Date.now
     },
-    referalCode:{
-        type:String,
-    },
-    redeemed:{
-        type:Boolean,
-    },
-    redeemedUser:[{
-        type:Schema.Types.ObjectId,
-        ref:'User'
-    }]
 
 })
 
-const User= mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
 module.exports = User
 

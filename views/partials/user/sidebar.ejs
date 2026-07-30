@@ -1,3 +1,31 @@
+ <style>
+    .layout {
+  display: flex;
+}
+.sidebar {
+  width: 210px;
+  background: #24303f;
+  min-height: 686px;
+  padding: 20px 0;
+}
+.sidebar .item {
+  padding: 13px 26px;
+  color: #b8c2cf;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+}
+.sidebar .item.active {
+  background: #2d3e50;
+  color: #fff;
+  border-left: 3px solid #6fcf97;
+  font-weight: 600;
+}
+.main {
+  flex: 1;
+  padding: 26px 32px;
+}
+
+ </style>
  <div class="layout">
             <div class="sidebar">
                 <div class="item">Dashboard</div>

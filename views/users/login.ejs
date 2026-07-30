@@ -2,33 +2,229 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="../../public/user/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #eef1f5;
+            width: 1200px;
+        }
+
+        .wf-box {
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #3a4453;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d6dbe3;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #8a94a3;
+            background: #fff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 18px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #2d6cdf;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: #2d3e50;
+            border: 1px solid #d6dbe3;
+        }
+
+        .btn-danger {
+            background: #fdeaea;
+            color: #d64545;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+
+
+        #btn-google {
+            background-color: #c7c7c7;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        #btn-google:hover {
+            background-color: #fbfdff;
+            color: black;
+        }
+
+        .or {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            /* Space between elements */
+        }
+
+        .or hr {
+            width: 40%;
+            border: .5px solid #acacac;
+            margin: 0;
+        }
+
+        .or .text-center {
+            white-space: nowrap;
+            font-size: 16px;
+            text-align: center;
+        }
+    </style>
+
 </head>
 
 <body>
     <div class="frame" style="display:flex;align-items:center;justify-content:center;">
         <div class="wf-box" style="width:400px;padding:36px 34px;border-radius:8px;position:relative;">
-            <div style="text-align:center;margin-bottom:26px;">
-                <div style="font-size:22px;font-weight:700;color:#2d3e50;">Penny<span style="color:#6fcf97;">.</span>
+            <form action="/user/login" method="POST" id="login-form">
+                <div style="text-align:center;margin-bottom:26px;">
+                    <div style="font-size:22px;font-weight:700;color:#2d3e50;">Penny<span
+                            style="color:#6fcf97;">.</span>
+                    </div>
+                    <div style="font-size:12.5px;color:#8a94a3;margin-top:4px;">Track your money, simply.</div>
                 </div>
-                <div style="font-size:12.5px;color:#8a94a3;margin-top:4px;">Track your money, simply.</div>
-            </div>
-            <div class="form-group">
-                <span class="form-label">Email</span>
-                <div class="form-input">you@example.com</div>
-            </div>
-            <div class="form-group">
-                <span class="form-label">Password</span>
-                <div class="form-input">••••••••</div>
-            </div>
-            <div style="text-align:right;font-size:12px;color:#2d6cdf;margin-bottom:18px;">Forgot password?</div>
-            <div class="btn btn-primary" style="width:100%;">Log In</div>
-            <div style="text-align:center;font-size:12.5px;color:#8a94a3;margin-top:16px;">
-                Don't have an account? <span style="color:#2d6cdf;font-weight:600;">Sign Up</span>
-            </div>
+
+                <div class="form-group">
+
+                    <a href="/user/auth/google/login" class="btn  btn-block" id="btn-google"><i
+                            class="fa-brands fa-google"></i>
+                        Continue with Google</a>
+                    <div class="or">
+                        <hr>
+                        <div class="text-center">or</div>
+                        <hr>
+                    </div>
+                    <br>
+
+                    <span class="form-label">Email</span>
+                    <input type="text" class="form-input" name="email" id="email">
+                    <div class="text-danger" id="email-error"></div>
+                </div>
+                <div class="form-group">
+                    <span class="form-label">Password</span>
+                    <input type="password" class="form-input" name="password" id="password">
+                    <div class="text-danger" id="password-error"></div>
+                </div>
+                <div style="text-align:right;font-size:12px;color:#2d6cdf;margin-bottom:18px;">
+                    <a href="/user/forgotPassword"> Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Log In</button>
+                <div style="text-align:center;font-size:12.5px;color:#8a94a3;margin-top:16px;">
+                    Don't have an account? <span style="color:#2d6cdf;font-weight:600;">
+                        <a href="/user/signup">Sign Up</a>
+                    </span>
+                </div>
+            </form>
         </div>
 
     </div>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
+
+    <script>
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        const emailError = document.getElementById('email-error');
+        const passwordError = document.getElementById('password-error');
+
+        const loginForm = document.getElementById('login-form');
+
+        function validateEmail(isValid) {
+            const emailVal = emailInput.value.trim();
+            const emailPattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/
+
+            if (!emailVal) {
+                emailError.textContent = 'Email is required';
+                isValid = false;
+            } else if (!emailPattern.test(emailVal)) {
+                emailError.textContent = 'Please enter a valid email address';
+                isValid = false;
+            } else {
+                emailError.textContent = '';
+            }
+
+            return isValid;
+        }
+
+        function validatePassword(isValid) {
+            const passwordVal = passwordInput.value.trim();
+
+            const aplha = /[a-zA-Z]/
+            const digit = /\d/
+
+            if (!passwordVal) {
+                passwordError.textContent = 'Password is required';
+                isValid = false;
+            } else if (!aplha.test(passwordVal) || !digit.test(passwordVal)){
+                passwordError.textContent = 'Password must contain at least one letter and one digit';
+                isValid = false;
+            } else if (passwordVal.length < 8) {
+                passwordError.textContent = 'Password must be at least 8 characters long';
+                isValid = false;
+            } else {
+                passwordError.textContent = '';
+            }
+
+            return isValid;
+
+        }
+
+        loginForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let isValid = true;
+
+            isValid = validateEmail(isValid)
+            isValid = validatePassword(isValid)
+
+            if (isValid) {
+                loginForm.submit();
+            }
+        })
+
+
+    </script>
 </body>
 
 </html>

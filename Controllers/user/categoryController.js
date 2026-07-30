@@ -1,6 +1,6 @@
 const laodCategoryPage=async(req,res)=>{
     try {
-        res.render('category')
+        res.render('categories')
     }
     catch (error) {
         res.status(500).send('server error')
