@@ -9,7 +9,11 @@ router.get('/dashboard',dashboardController.loadDashBoard)
 router.get('/page-not-found',userConteroller.loadPageNotFound)
 router.get('/about-us',userConteroller.loadAboutUsPage)
 router.get('/login',userConteroller.loadLoginPage)
+
 router.get('/signup',userConteroller.loadSignUpPage)
+router.post('/signup',userConteroller.signup)
+router.get('/otp',userConteroller.loadOtpPage)
+
 router.get('/change-password',userConteroller.loadChangePasswordPage)
 router.get('/category',categoryController.laodCategoryPage)
 router.get('/transaction',transactionController.loadTransactionPage)

@@ -131,7 +131,7 @@
                     </div>
                     <br>
                     <span class="form-label">Full Name</span>
-                    <input type="text" class="form-input" name="fullNmae" id="full-name">
+                    <input type="text" class="form-input" name="fullName" id="full-name">
                     <div class="text-danger" id="name-error"></div>
                 </div>
                 <div class="form-group">
@@ -174,78 +174,78 @@
         const confirmPasswordError = document.getElementById('confirm-password-error')
 
 
-        function validateName(isValid){
-            const nameVal=nameInput.value.trim()
-            if(!nameVal){
+        function validateName(isValid) {
+            const nameVal = nameInput.value.trim()
+            if (!nameVal) {
                 nameError.textContent = 'Full name is required'
                 isValid = false;
-            } else{
-                nameError.textContent 
+            } else {
+                nameError.textContent=''
             }
 
             return isValid
         }
-        function validateEmail(isValid){
-            const emailVal=emailInput.value.trim()
-                        const emailPattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/
+        function validateEmail(isValid) {
+            const emailVal = emailInput.value.trim()
+            const emailPattern = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,4})$/
 
-                        if(!emailVal){
-                            emailError.textContent = 'Email is required'
-                            isValid = false;
-                        } else if(!emailPattern.test(emailVal)){
-emailError.textContent = 'Please enter a valid email address'
-                            isValid=false
-                        }
-                        else{
-                            emailError.textContent = ''
-                        }
-                        return isValid
-                        }
+            if (!emailVal) {
+                emailError.textContent = 'Email is required'
+                isValid = false;
+            } else if (!emailPattern.test(emailVal)) {
+                emailError.textContent = 'Please enter a valid email address'
+                isValid = false
+            }
+            else {
+                emailError.textContent = ''
+            }
+            return isValid
+        }
 
-                        function validatePassword(isValid){
-                            const passwordVal = passwordInput.value.trim()
-                            const confirmPasswordVal = confirmPasswordInput.value.trim()
+        function validatePassword(isValid) {
+            const passwordVal = passwordInput.value.trim()
+            const confirmPasswordVal = confirmPasswordInput.value.trim()
 
-                            const alpha = /[a-zA-z]/
-                            const digit=/\d/
+            const alpha = /[a-zA-z]/
+            const digit = /\d/
 
-                            if(!passwordVal){
-                                passwordError.textContent = 'Password is required'
-                                isValid = false
+            if (!passwordVal) {
+                passwordError.textContent = 'Password is required'
+                isValid = false
 
-                            }else if(!alpha.test(passwordVal) || !digit.test(passwordVal)){
-                                passwordError.textContent = 'Password must contain at least one letter and one digit'
-                                isValid = false
-                                } else if(passwordVal.length < 8){
-                                    passwordError.textContent = 'Password must be at least 8 characters long'
-                                    isValid = false
-                                } else if(passwordVal!== confirmPasswordVal){
-                                    passwordError.textContent = 'Passwords do not match'
-                                    isValid = false
-                                }else{
- passwordError.textContent = ''
-                                }
-                                   
-                                
-                            
-                                 
-                        return isValid
-                        }
+            } else if (!alpha.test(passwordVal) || !digit.test(passwordVal)) {
+                passwordError.textContent = 'Password must contain at least one letter and one digit'
+                isValid = false
+            } else if (passwordVal.length < 8) {
+                passwordError.textContent = 'Password must be at least 8 characters long'
+                isValid = false
+            } else if (passwordVal !== confirmPasswordVal) {
+                confirmPasswordError.textContent = 'Passwords do not match'
+                isValid = false
+            } else {
+                passwordError.textContent = ''
+            }
 
-                        signupForm.addEventListener('submit',function(event){
-                            event.preventDefault()
 
-                            isValid=true
-                            isValid = validateName(isValid)
-                            isValid = validateEmail(isValid)
-                            isValid = validatePassword(isValid)
 
-                            if(isValid){
-                                signupForm.submit()
-                            }
-                        })
-        
-                        
+
+            return isValid
+        }
+
+        signupForm.addEventListener('submit', function (event) {
+            event.preventDefault()
+
+           let isValid = true
+            isValid = validateName(isValid)
+            isValid = validateEmail(isValid)
+            isValid = validatePassword(isValid)
+
+            if (isValid) {
+                signupForm.submit()
+            }
+        })
+
+
     </script>
 </body>
 
