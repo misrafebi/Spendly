@@ -12,7 +12,8 @@ router.get('/login',userConteroller.loadLoginPage)
 
 router.get('/signup',userConteroller.loadSignUpPage)
 router.post('/signup',userConteroller.signup)
-router.get('/otp',userConteroller.loadOtpPage)
+router.get('/verify-otp',userConteroller.loadOtpPage)
+router.post('/verify-otp',userConteroller.verifyOtp)
 
 router.get('/change-password',userConteroller.loadChangePasswordPage)
 router.get('/category',categoryController.laodCategoryPage)

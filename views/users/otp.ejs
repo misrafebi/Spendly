@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
@@ -57,6 +58,7 @@
             justify-content: center;
             margin: 0 auto 16px;
         }
+
         .icon i {
             font-size: 24px;
             color: white;
@@ -69,6 +71,7 @@
             color: #0c4a6e;
             margin-bottom: 6px;
         }
+
         .sub {
             font-size: 0.75rem;
             color: #64748b;
@@ -82,6 +85,7 @@
             justify-content: center;
             margin-bottom: 20px;
         }
+
         .otp-input {
             width: 44px;
             height: 48px;
@@ -93,6 +97,7 @@
             border-radius: 14px;
             background: white;
         }
+
         .otp-input:focus {
             outline: none;
             border-color: #1e4d7c;
@@ -103,12 +108,14 @@
             font-size: 0.75rem;
             margin-bottom: 20px;
         }
+
         .resend a {
             color: #1e4d7c;
             text-decoration: none;
             font-weight: 500;
             cursor: pointer;
         }
+
         .timer {
             font-size: 0.65rem;
             color: #94a3b8;
@@ -128,6 +135,7 @@
             cursor: pointer;
             margin-bottom: 16px;
         }
+
         .btn:active {
             background: #153e62;
         }
@@ -136,10 +144,12 @@
         .contact {
             font-size: 0.7rem;
         }
+
         .contact a {
             color: #64748b;
             text-decoration: none;
         }
+
         .contact a:hover {
             color: #1e4d7c;
         }
@@ -152,166 +162,199 @@
             margin-bottom: 16px;
             display: none;
         }
+
         .msg.error {
             background: #fee2e2;
             color: #dc2626;
         }
+
         .msg.success {
             background: #e0f2e7;
             color: #16a34a;
         }
     </style>
 </head>
+
 <body>
 
-<div class="overlay" id="popup">
-    <div class="popup">
-       
-        <div class="title">Verify OTP</div>
-        <div class="sub">Enter 6 digit OTP sent to your WhatsApp</div>
+    <div class="overlay" id="popup">
+        <div class="popup">
 
-        <div class="msg" id="msg"></div>
+            <form action="/user/verify-otp" method="post" id="otp-form">
 
-        <div class="otp-box">
-            <input type="text" class="otp-input" id="otp1" maxlength="1" autofocus>
-            <input type="text" class="otp-input" id="otp2" maxlength="1">
-            <input type="text" class="otp-input" id="otp3" maxlength="1">
-            <input type="text" class="otp-input" id="otp4" maxlength="1">
-            <input type="text" class="otp-input" id="otp5" maxlength="1">
-            <input type="text" class="otp-input" id="otp6" maxlength="1">
-        </div>
+                <div class="title">Verify OTP</div>
+                <div class="sub">Enter 6 digit OTP sent to your WhatsApp</div>
 
-        <div class="resend">
-            <a id="resendBtn">Resend OTP</a>
-            <div class="timer" id="timer"></div>
-        </div>
+                <div class="msg" id="msg"></div>
 
-        <button class="btn" id="validateBtn">Validate OTP</button>
+                <div class="otp-box">
+                    <input type="text" class="otp-input" id="otp1" maxlength="1" autofocus>
+                    <input type="text" class="otp-input" id="otp2" maxlength="1">
+                    <input type="text" class="otp-input" id="otp3" maxlength="1">
+                    <input type="text" class="otp-input" id="otp4" maxlength="1">
+                    <input type="text" class="otp-input" id="otp5" maxlength="1">
+                    <input type="text" class="otp-input" id="otp6" maxlength="1">
 
-        <div class="contact">
-            <a href="#" id="contactLink">OTP Not Delivered? Contact us</a>
+                    <input type="hidden" id="otp" name="otp">
+                </div>
+
+                <div class="resend">
+                    <a id="resendBtn">Resend OTP</a>
+                    <div class="timer" id="timer"></div>
+                </div>
+
+                <button type="submit" class="btn" id="validateBtn">Validate OTP</button>
+
+                <div class="contact">
+                    <a href="#" id="contactLink">OTP Not Delivered? Contact us</a>
+                </div>
+
+            </form>
+
         </div>
     </div>
-</div>
 
-<script>
-    const inputs = ['otp1', 'otp2', 'otp3', 'otp4', 'otp5', 'otp6'];
-    let canResend = true;
-    let timerInterval = null;
-    let timeLeft = 0;
+    <script>
+        const otpForm = document.getElementById('otp-form')
 
-    // Auto focus next input
-    inputs.forEach((id, idx) => {
-        const el = document.getElementById(id);
-        el.addEventListener('input', (e) => {
-            if (e.target.value.length === 1 && idx < 5) {
-                document.getElementById(inputs[idx + 1]).focus();
+        otpForm.addEventListener('submit', function (event) {
+            const inputs = document.querySelectorAll('.otp-input')
+            let otp = ''
+
+            inputs.forEach(input => {
+                otp = otp + input.value
+            })
+
+            if(otp.length!==6){               
+                alert('Please enter all 6 digits.')
+                return event.preventDefault()
             }
+
+            document.getElementById('otp').value = otp
+        })
+    </script>
+
+    <script>
+        const inputs = ['otp1', 'otp2', 'otp3', 'otp4', 'otp5', 'otp6'];
+        let canResend = true;
+        let timerInterval = null;
+        let timeLeft = 0;
+
+        // Auto focus next input
+        inputs.forEach((id, idx) => {
+            const el = document.getElementById(id);
+            el.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && idx < 5) {
+                    document.getElementById(inputs[idx + 1]).focus();
+                }
+            });
+            el.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value.length === 0 && idx > 0) {
+                    document.getElementById(inputs[idx - 1]).focus();
+                }
+            });
+            // Allow only numbers
+            el.addEventListener('keypress', (e) => {
+                if (!/[0-9]/.test(e.key)) e.preventDefault();
+            });
         });
-        el.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && e.target.value.length === 0 && idx > 0) {
-                document.getElementById(inputs[idx - 1]).focus();
+
+        function getOTP() {
+            let otp = '';
+            for (let id of inputs) {
+                const val = document.getElementById(id).value;
+                if (!val) return '';
+                otp += val;
             }
-        });
-        // Allow only numbers
-        el.addEventListener('keypress', (e) => {
-            if (!/[0-9]/.test(e.key)) e.preventDefault();
-        });
-    });
-
-    function getOTP() {
-        let otp = '';
-        for (let id of inputs) {
-            const val = document.getElementById(id).value;
-            if (!val) return '';
-            otp += val;
+            return otp;
         }
-        return otp;
-    }
 
-    function clearOTP() {
-        for (let id of inputs) {
-            document.getElementById(id).value = '';
-        }
-        document.getElementById('otp1').focus();
-    }
-
-    function showMessage(text, isError = true) {
-        const msgDiv = document.getElementById('msg');
-        msgDiv.textContent = text;
-        msgDiv.className = 'msg ' + (isError ? 'error' : 'success');
-        msgDiv.style.display = 'block';
-        setTimeout(() => {
-            msgDiv.style.display = 'none';
-        }, 2500);
-    }
-
-    function startTimer(seconds = 30) {
-        if (timerInterval) clearInterval(timerInterval);
-        canResend = false;
-        timeLeft = seconds;
-        const timerEl = document.getElementById('timer');
-        const resendBtn = document.getElementById('resendBtn');
-        resendBtn.style.opacity = '0.5';
-        resendBtn.style.pointerEvents = 'none';
-        
-        timerInterval = setInterval(() => {
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                canResend = true;
-                timerEl.textContent = '';
-                resendBtn.style.opacity = '1';
-                resendBtn.style.pointerEvents = 'auto';
-            } else {
-                timerEl.textContent = `Resend in ${timeLeft}s`;
-                timeLeft--;
+        function clearOTP() {
+            for (let id of inputs) {
+                document.getElementById(id).value = '';
             }
-        }, 1000);
-    }
-
-    function resendOTP() {
-        if (!canResend) {
-            showMessage('Please wait before resending');
-            return;
+            document.getElementById('otp1').focus();
         }
-        showMessage('OTP resent!', false);
-        clearOTP();
+
+        function showMessage(text, isError = true) {
+            const msgDiv = document.getElementById('msg');
+            msgDiv.textContent = text;
+            msgDiv.className = 'msg ' + (isError ? 'error' : 'success');
+            msgDiv.style.display = 'block';
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 2500);
+        }
+
+        function startTimer(seconds = 30) {
+            if (timerInterval) clearInterval(timerInterval);
+            canResend = false;
+            timeLeft = seconds;
+            const timerEl = document.getElementById('timer');
+            const resendBtn = document.getElementById('resendBtn');
+            resendBtn.style.opacity = '0.5';
+            resendBtn.style.pointerEvents = 'none';
+
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    canResend = true;
+                    timerEl.textContent = '';
+                    resendBtn.style.opacity = '1';
+                    resendBtn.style.pointerEvents = 'auto';
+                } else {
+                    timerEl.textContent = `Resend in ${timeLeft}s`;
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+
+        function resendOTP() {
+            if (!canResend) {
+                showMessage('Please wait before resending');
+                return;
+            }
+            showMessage('OTP resent!', false);
+            clearOTP();
+            startTimer(30);
+        }
+
+        function validateOTP() {
+            const otp = getOTP();
+            if (otp.length !== 6) {
+                showMessage('Enter complete 6-digit OTP');
+                return;
+            }
+            // Demo: any 6-digit except 000000 works
+            if (otp === '000000') {
+                showMessage('Invalid OTP');
+                return;
+            }
+            showMessage('Verified!', false);
+            setTimeout(() => {
+                document.getElementById('popup').style.display = 'none';
+                alert('✓ OTP verified successfully!');
+            }, 1000);
+        }
+
+        // Event listeners
+        document.getElementById('validateBtn').addEventListener('click', validateOTP);
+        document.getElementById('resendBtn').addEventListener('click', resendOTP);
+        document.getElementById('contactLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Contact: +91 9036060030 | info@industraveller.com');
+        });
+
+        // Enter key support
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && getOTP().length === 6) validateOTP();
+        });
+
         startTimer(30);
-    }
 
-    function validateOTP() {
-        const otp = getOTP();
-        if (otp.length !== 6) {
-            showMessage('Enter complete 6-digit OTP');
-            return;
-        }
-        // Demo: any 6-digit except 000000 works
-        if (otp === '000000') {
-            showMessage('Invalid OTP');
-            return;
-        }
-        showMessage('Verified!', false);
-        setTimeout(() => {
-            document.getElementById('popup').style.display = 'none';
-            alert('✓ OTP verified successfully!');
-        }, 1000);
-    }
 
-    // Event listeners
-    document.getElementById('validateBtn').addEventListener('click', validateOTP);
-    document.getElementById('resendBtn').addEventListener('click', resendOTP);
-    document.getElementById('contactLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('Contact: +91 9036060030 | info@industraveller.com');
-    });
-
-    // Enter key support
-    document.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && getOTP().length === 6) validateOTP();
-    });
-
-    startTimer(30);
-</script>
+    </script>
 
 </body>
+
 </html>
