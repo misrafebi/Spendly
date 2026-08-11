@@ -175,6 +175,42 @@ const verifyOtp = async (req, res) => {
     }
 }
 
+const resendOtp = async (req, res) => {
+    try {
+        const  email  = req.session.userData?.email
+
+        const otp = generateOtp()
+        console.log('OTP', otp);
+
+
+        const sendMail =await  sendVerifyMail(email, otp)
+        console.log('Email send: ', sendMail);
+
+        if (!sendMail) {
+           return res.status(500).json({
+            success:false,
+            message:'Cannot send OTP to your email. Please try again later.'
+           })
+
+        } 
+            req.session.userOtp = otp
+            console.log('New session OTP :', req.session.userOtp);
+            
+            return res.status(200).json({
+                success:true,
+                message:'OTP resent successfully.'
+            })
+        
+
+    } catch (error) {
+        console.error("Resend OTP error:", error)
+        return res.status(500).json({
+            success:false,
+            message:'Something went wrong while resending OTP.'
+        })
+    }
+}
+
 const loadChangePasswordPage = async (req, res) => {
     try {
         res.render('changePassword')
@@ -197,5 +233,6 @@ module.exports = {
     loadChangePasswordPage,
     signup,
     loadOtpPage,
-    verifyOtp
+    verifyOtp,
+    resendOtp
 }

@@ -183,7 +183,7 @@
             <form action="/user/verify-otp" method="post" id="otp-form">
 
                 <div class="title">Verify OTP</div>
-                <div class="sub">Enter 6 digit OTP sent to your WhatsApp</div>
+                <div class="sub">Enter 6 digit OTP sent to your Email</div>
 
                 <div class="msg" id="msg"></div>
 
@@ -225,7 +225,7 @@
                 otp = otp + input.value
             })
 
-            if(otp.length!==6){               
+            if (otp.length !== 6) {
                 alert('Please enter all 6 digits.')
                 return event.preventDefault()
             }
@@ -300,7 +300,7 @@
                     clearInterval(timerInterval);
                     canResend = true;
                     timerEl.textContent = '';
-                    resendBtn.style.opacity = '1';
+                    resendBtn.style.opacity = '1'
                     resendBtn.style.pointerEvents = 'auto';
                 } else {
                     timerEl.textContent = `Resend in ${timeLeft}s`;
@@ -353,6 +353,28 @@
         startTimer(30);
 
 
+    </script>
+
+    <script>
+        const resentOTPBtn = document.getElementById('resendBtn')
+        resentOTPBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/user/resend-otp', {
+                    method: 'POST',
+                })
+
+                const result =await response.json()
+
+                if (result.success) {
+            alert(result.message);
+        } else {
+            alert(result.message);
+        }
+            } catch (error) {
+                console.error(error);
+                alert('Something went wrong. Please try again later.')
+            }
+        })
     </script>
 
 </body>

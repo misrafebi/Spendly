@@ -14,6 +14,7 @@ router.get('/signup',userConteroller.loadSignUpPage)
 router.post('/signup',userConteroller.signup)
 router.get('/verify-otp',userConteroller.loadOtpPage)
 router.post('/verify-otp',userConteroller.verifyOtp)
+router.post('/resend-otp',userConteroller.resendOtp)
 
 router.get('/change-password',userConteroller.loadChangePasswordPage)
 router.get('/category',categoryController.laodCategoryPage)
