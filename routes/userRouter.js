@@ -8,7 +8,9 @@ const transactionController=require('../Controllers/user/transactionController')
 router.get('/dashboard',dashboardController.loadDashBoard)
 router.get('/page-not-found',userConteroller.loadPageNotFound)
 router.get('/about-us',userConteroller.loadAboutUsPage)
+
 router.get('/login',userConteroller.loadLoginPage)
+router.post('/login',userConteroller.login)
 
 router.get('/signup',userConteroller.loadSignUpPage)
 router.post('/signup',userConteroller.signup)

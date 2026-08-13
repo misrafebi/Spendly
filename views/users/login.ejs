@@ -114,6 +114,7 @@
 <body>
     <div class="frame" style="display:flex;align-items:center;justify-content:center;">
         <div class="wf-box" style="width:400px;padding:36px 34px;border-radius:8px;position:relative;">
+
             <form action="/user/login" method="POST" id="login-form">
                 <div style="text-align:center;margin-bottom:26px;">
                     <div style="font-size:22px;font-weight:700;color:#2d3e50;">Penny<span
@@ -153,6 +154,7 @@
                     </span>
                 </div>
             </form>
+
         </div>
 
     </div>
@@ -223,7 +225,15 @@
             }
         })
 
+    </script>
 
+    <script>
+        const urlParams=new URLSearchParams(window.location.search)
+        const message=urlParams.get('message')
+
+        if(message){
+            alert(message)
+        }
     </script>
 </body>
 

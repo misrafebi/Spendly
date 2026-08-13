@@ -1,6 +1,7 @@
 
 const User = require('../../models/userSchema')
 const bcrypt = require('bcrypt')
+const { log } = require('console')
 const crypto = require('crypto')
 const nodemailer = require('nodemailer')
 
@@ -37,6 +38,36 @@ const loadLoginPage = async (req, res) => {
         res.status(500).send('server error')
         res.render('user/pageNotFound', {
             message: 'Something went wrong while loading the login page. Please try again shortly.'
+        })
+    }
+}
+
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body
+        if (!email && !password) {
+            console.log('Email or password is requiered.');
+            return res.redirect('/user/login?message:Email or password is requiered.&type=error')
+        }
+
+        const user = await User.findOne({ email })
+        if (!user) {
+            console.log('Can not found user.');
+            return res.redirect('/user/login?message=Can not found user.&type=error')
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            console.log('Incorrect password.');
+            return res.redirect('/user/login?message=Incorrect password. Please try again later.&type=error')
+        }
+
+        req.session.userData = email
+
+        res.render('dashboard')
+    } catch (error) {
+        return res.status(500).redirect('pageNotFound', {
+            message: 'Something wend wrong while login, Please try again later.'
         })
     }
 }
@@ -177,36 +208,36 @@ const verifyOtp = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
-        const  email  = req.session.userData?.email
+        const email = req.session.userData?.email
 
         const otp = generateOtp()
         console.log('OTP', otp);
 
 
-        const sendMail =await  sendVerifyMail(email, otp)
+        const sendMail = await sendVerifyMail(email, otp)
         console.log('Email send: ', sendMail);
 
         if (!sendMail) {
-           return res.status(500).json({
-            success:false,
-            message:'Cannot send OTP to your email. Please try again later.'
-           })
-
-        } 
-            req.session.userOtp = otp
-            console.log('New session OTP :', req.session.userOtp);
-            
-            return res.status(200).json({
-                success:true,
-                message:'OTP resent successfully.'
+            return res.status(500).json({
+                success: false,
+                message: 'Cannot send OTP to your email. Please try again later.'
             })
-        
+
+        }
+        req.session.userOtp = otp
+        console.log('New session OTP :', req.session.userOtp);
+
+        return res.status(200).json({
+            success: true,
+            message: 'OTP resent successfully.'
+        })
+
 
     } catch (error) {
         console.error("Resend OTP error:", error)
         return res.status(500).json({
-            success:false,
-            message:'Something went wrong while resending OTP.'
+            success: false,
+            message: 'Something went wrong while resending OTP.'
         })
     }
 }
@@ -234,5 +265,6 @@ module.exports = {
     signup,
     loadOtpPage,
     verifyOtp,
-    resendOtp
+    resendOtp,
+    login
 }
