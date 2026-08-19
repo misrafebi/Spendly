@@ -2,47 +2,106 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="../../public/user/style.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #eef1f5;
-  width: 1200px;
+  <link rel="stylesheet" href="../../public/user/style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #eef1f5;
+      width: 1200px;
+    }
+
+    .frame {
+      width: 1200px;
+      min-height: 750px;
+      background: #f7f8fa;
+      position: relative;
+    }
+
+    .topbar {
+      height: 64px;
+      background: #2d3e50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      color: #fff;
+    }
+
+    .topbar .logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .topbar .logo span {
+      color: #6fcf97;
+    }
+
+    .topbar .nav-right {
+      display: flex;
+      gap: 22px;
+      font-size: 14px;
+      color: #cbd5e0;
+
+    }
+
+    .nav-right {
+      position: relative;
+      cursor: pointer;
+    }
+    .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    min-width: 120px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
-.frame {
-  width: 1200px;
-  min-height: 750px;
-  background: #f7f8fa;
-  position: relative;
+ .dropdown-menu a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
 }
-.topbar {
-  height: 64px;
-  background: #2d3e50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 28px;
-  color: #fff;
+.dropdown-menu a:hover {
+    background-color: #f2f2f2;
 }
-.topbar .logo {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+.dropdown-menu.show {
+    display: block;
 }
-.topbar .logo span { color: #6fcf97; }
-.topbar .nav-right {
-  display: flex;
-  gap: 22px;
-  font-size: 14px;
-  color: #cbd5e0;
-}
-    </style>
+  </style>
 </head>
 
 <body>
-    <div class="frame">
-        <div class="topbar">
-            <div class="logo">Penny<span>.</span></div>
-            <div class="nav-right"><span>Jane Doe</span><span>&#9660;</span></div>
+  <div class="frame">
+    <div class="topbar">
+      <div class="logo">Penny<span>.</span></div>
+      <div class="nav-right">
+        <span>
+          <%= user.name%>
+        </span>
+
+        <span id="dropdownArrow" class="arrow">&#9660;</span>
+        <div id="dropdownMenu" class="dropdown-menu">
+          <!-- <a href="/user/profile">Profile</a> -->
+          <a href="/user/logout" style="color: #e08a8a;">Logout</a>
         </div>
+
+      </div>
+    </div>
+
+    <script>
+      const dropdownArrow = document.getElementById("dropdownArrow");
+const dropdownMenu = document.getElementById("dropdownMenu");
+
+dropdownArrow.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("show");
+});
+    </script>

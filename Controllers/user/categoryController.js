@@ -1,6 +1,17 @@
-const laodCategoryPage=async(req,res)=>{
+const User = require('../../models/userSchema')
+
+const laodCategoryPage = async (req, res) => {
     try {
-        res.render('categories')
+        const email = req.session.userData
+        console.log('email: ', email);
+
+        const user = await User.findOne({ email })
+        console.log('user: ', user);
+
+        res.render('categories', {
+            activePage:'category',
+            user
+        })
     }
     catch (error) {
         res.status(500).send('server error')
@@ -10,6 +21,6 @@ const laodCategoryPage=async(req,res)=>{
     }
 }
 
-module.exports={
+module.exports = {
     laodCategoryPage
 }

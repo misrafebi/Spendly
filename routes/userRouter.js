@@ -1,25 +1,29 @@
-const express=require('express')
-const router=express.Router()
-const userConteroller=require('../Controllers/user/userController')
-const dashboardController=require('../Controllers/user/dashboardController')
-const categoryController=require('../Controllers/user/categoryController')
-const transactionController=require('../Controllers/user/transactionController')
+const express = require('express')
+const router = express.Router()
+const userConteroller = require('../Controllers/user/userController')
+const dashboardController = require('../Controllers/user/dashboardController')
+const categoryController = require('../Controllers/user/categoryController')
+const transactionController = require('../Controllers/user/transactionController')
+const auth = require('../middlewares/userAuth')
 
-router.get('/dashboard',dashboardController.loadDashBoard)
-router.get('/page-not-found',userConteroller.loadPageNotFound)
-router.get('/about-us',userConteroller.loadAboutUsPage)
+router.get('/dashboard', auth.noCache, auth.isLogin, dashboardController.loadDashBoard)
+router.get('/page-not-found', userConteroller.loadPageNotFound)
+router.get('/about-us', auth.noCache, auth.isLogin, userConteroller.loadAboutUsPage)
 
-router.get('/login',userConteroller.loadLoginPage)
-router.post('/login',userConteroller.login)
+router.get('/login', auth.noCache, auth.isLogout, userConteroller.loadLoginPage,)
+router.post('/login', auth.noCache, auth.isLogout, userConteroller.login)
 
-router.get('/signup',userConteroller.loadSignUpPage)
-router.post('/signup',userConteroller.signup)
-router.get('/verify-otp',userConteroller.loadOtpPage)
-router.post('/verify-otp',userConteroller.verifyOtp)
-router.post('/resend-otp',userConteroller.resendOtp)
+router.get('/signup',auth.noCache, auth.isLogout,userConteroller.loadSignUpPage)
+router.post('/signup',auth.noCache, auth.isLogout,userConteroller.signup)
+router.get('/verify-signup-otp',userConteroller.loadSignupOtpPage)
+router.post('/verify-signup-otp',userConteroller.verifySignupOtp)
+router.post('/resend-signup-otp',userConteroller.resendSignupOtp)
 
-router.get('/change-password',userConteroller.loadChangePasswordPage)
-router.get('/category',categoryController.laodCategoryPage)
-router.get('/transaction',transactionController.loadTransactionPage)
+router.get('/change-password')
 
-module.exports=router
+router.get('/category', auth.noCache, auth.isLogin, categoryController.laodCategoryPage)
+router.get('/transaction', auth.noCache, auth.isLogin, transactionController.loadTransactionPage)
+
+router.get('/logout',auth.noCache,auth.isLogin,userConteroller.logout)
+
+module.exports = router

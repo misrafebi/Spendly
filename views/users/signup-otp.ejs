@@ -180,8 +180,8 @@
     <div class="overlay" id="popup">
         <div class="popup">
 
-            <form action="/user/verify-otp" method="post" id="otp-form">
 
+            <form action="/user/verify-signup-otp" method="post" id="otp-form">
                 <div class="title">Verify OTP</div>
                 <div class="sub">Enter 6 digit OTP sent to your Email</div>
 
@@ -319,26 +319,28 @@
             startTimer(30);
         }
 
-        function validateOTP() {
-            const otp = getOTP();
-            if (otp.length !== 6) {
-                showMessage('Enter complete 6-digit OTP');
-                return;
-            }
-            // Demo: any 6-digit except 000000 works
-            if (otp === '000000') {
-                showMessage('Invalid OTP');
-                return;
-            }
-            showMessage('Verified!', false);
-            setTimeout(() => {
-                document.getElementById('popup').style.display = 'none';
-                alert('✓ OTP verified successfully!');
-            }, 1000);
-        }
+        // function validateOTP() {
+        //     const otp = getOTP();
+        //     if (otp.length !== 6) {
+        //         showMessage('Enter complete 6-digit OTP');
+        //         return;
+        //     }
+        //     // Demo: any 6-digit except 000000 works
+        //     if (otp === '000000') {
+        //         showMessage('Invalid OTP');
+        //         return;
+        //     }
+        //     showMessage('Verified!', false);
+        //     setTimeout(() => {
+        //         document.getElementById('popup').style.display = 'none';
+        //         alert('✓ OTP verified successfully!');
+        //     }, 1000);
+        // }
 
         // Event listeners
-        document.getElementById('validateBtn').addEventListener('click', validateOTP);
+        
+        // document.getElementById('validateBtn').addEventListener('click', validateOTP);
+       
         document.getElementById('resendBtn').addEventListener('click', resendOTP);
         document.getElementById('contactLink').addEventListener('click', (e) => {
             e.preventDefault();
@@ -359,7 +361,7 @@
         const resentOTPBtn = document.getElementById('resendBtn')
         resentOTPBtn.addEventListener('click', async () => {
             try {
-                const response = await fetch('/user/resend-otp', {
+                const response = await fetch('/user/resend-signup-otp', {
                     method: 'POST',
                 })
 
@@ -375,6 +377,15 @@
                 alert('Something went wrong. Please try again later.')
             }
         })
+    </script>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search)
+        const message = urlParams.get('message')
+
+        if (message) {
+            alert(message)
+        }
     </script>
 
 </body>

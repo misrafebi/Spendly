@@ -1,37 +1,46 @@
- <style>
-    .layout {
-  display: flex;
-}
-.sidebar {
-  width: 210px;
-  background: #24303f;
-  min-height: 686px;
-  padding: 20px 0;
-}
-.sidebar .item {
-  padding: 13px 26px;
-  color: #b8c2cf;
-  font-size: 14px;
-  border-left: 3px solid transparent;
-}
-.sidebar .item.active {
-  background: #2d3e50;
-  color: #fff;
-  border-left: 3px solid #6fcf97;
-  font-weight: 600;
-}
-.main {
-  flex: 1;
-  padding: 26px 32px;
-}
+<style>
+  .layout {
+    display: flex;
+  }
 
- </style>
- <div class="layout">
-            <div class="sidebar">
-                <div class="item">Dashboard</div>
-                <div class="item">Transactions</div>
-                <div class="item">Categories</div>
-                <div class="item">Change Password</div>
-                <div class="item active">About Us</div>
-                <div class="item" style="margin-top:200px;color:#e08a8a;">Logout</div>
-            </div>
+  .sidebar {
+    width: 210px;
+    background: #24303f;
+    min-height: 686px;
+    padding: 20px 0;
+  }
+
+  .sidebar .item {
+    padding: 13px 26px;
+    color: #b8c2cf;
+    font-size: 14px;
+    border-left: 3px solid transparent;
+  }
+
+  .sidebar .item.active {
+    background: #2d3e50;
+    color: #fff;
+    border-left: 3px solid #6fcf97;
+    font-weight: 600;
+  }
+
+  .main {
+    flex: 1;
+    padding: 26px 32px;
+  }
+
+  .item-link {
+    text-decoration: none;
+    color: #b8c2cf;
+    font-size: 14px;
+  }
+</style>
+<div class="layout">
+  <div class="sidebar">
+    <div class="item <%= activePage==='dashboard'? 'active' : ''%>"><a href="/user/dashboard" class="item-link"> Dashboard</a> </div>
+    <div class="item <%= activePage==='transaction'? 'active' : ''%>"><a href="/user/transaction" class="item-link">Transactions</a> </div>
+    <div class="item <%= activePage==='category'? 'active' : ''%>"><a href="/user/category" class="item-link">Categories</a> </div>
+    <div class="item <%= activePage==='change-password'? 'active' : ''%>"><a href="/user/change-password" class="item-link">Change Password </a></div>
+    <div class="item  <%= activePage==='about-us'? 'active' : ''%>"><a href="/user/about-us" class="item-link">About Us </a></div>
+
+  </div>
