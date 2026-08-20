@@ -41,6 +41,8 @@ const loadAboutUsPage = async (req, res) => {
 }
 
 
+////// LOGIN
+
 const loadLoginPage = async (req, res) => {
     try {
         res.render('login')
@@ -129,6 +131,7 @@ async function sendVerifyMail(email, otp) {
 ///////
 
 
+///// SIGNUP
 
 const loadSignUpPage = async (req, res) => {
     try {
@@ -173,16 +176,8 @@ const signup = async (req, res) => {
 
         req.session.userOtp = otp
         req.session.userData = { fullName, email, password }
-        console.log(req.session.userOtp, 'user otp session');
-        console.log(req.session.userData, 'user data session');
 
-
-        console.log('finished signup fntn');
         return res.redirect('/user/verify-signup-otp?message=Enter Your OTP.&type=success')
-
-
-
-
 
     } catch (error) {
         return res.status(500).render('pageNotFound', {
@@ -207,15 +202,8 @@ const loadSignupOtpPage = async (req, res) => {
 
 const verifySignupOtp = async (req, res) => {
     const { otp } = req.body
-   console.log('VERIFY OTP FUNCTION CALLED');
-    console.log('Request body:', req.body);
-    console.log('Entered OTP:', req.body.otp);
-    console.log('Session OTP:', req.session.userOtp);
-
     try {
-        
 
-        console.log('entered verify otp fctn');
 
         if (otp === req.session.userOtp) {
             console.log("Entered OTP:", otp)
@@ -225,38 +213,25 @@ const verifySignupOtp = async (req, res) => {
             const user = req.session.userData
 
             const hashedPassword = await bcrypt.hash(user.password, 10)
-            console.log('hased pass', hashedPassword);
-
 
             const newUser = new User({
                 name: user.fullName,
                 email: user.email,
                 password: hashedPassword
             })
-
-            console.log('new user created');
-
             await newUser.save()
-            console.log('new user saved');
-
 
             req.session.user = newUser._id
 
             const email = req.session.userData?.email
-            console.log('email : ', email);
-
             req.session.userData = email
-            console.log('session email : ', req.session.userData);
-
-            console.log('enterd into dashboard');
 
             return res.redirect('/user/dashboard?message=Signup successfully.&type=error')
+
         } else {
-
-            console.log('redirected to verify otp ');
-
             return res.redirect('/user/verify-signup-otp?message=Invalid OTP&type=error')
         }
+
     } catch (error) {
         return res.status(500).render('pageNotFound', {
             message: 'Something went wrong while verifying otp. '
@@ -284,7 +259,6 @@ const resendSignupOtp = async (req, res) => {
 
         }
         req.session.userOtp = otp
-        console.log('New session OTP :', req.session.userOtp);
 
         return res.status(200).json({
             success: true,
@@ -301,7 +275,154 @@ const resendSignupOtp = async (req, res) => {
     }
 }
 
+////// CHANGE PASSWORD
 
+const loadChangePasswordPage = async (req, res) => {
+    try {
+
+        const email = req.session.userData
+
+        const user = await User.findOne({ email })
+        return res.render('changePassword', {
+            user,
+            activePage: 'change-password'
+        })
+
+    } catch (error) {
+        return console.log(error);
+
+    }
+}
+
+const changePassword = async (req, res) => {
+    try {
+
+        const { currentPassword, newPassword, confirmNewPassword } = req.body
+
+        const email = req.session.userData
+        if (!email) {
+            console.log('email is not found');
+            return res.redirect('/user/change-password?message=Email not found. Please login again.&type=error')
+        }
+
+        if (!currentPassword || !newPassword || !confirmNewPassword) {
+            console.log('passwords are empty');
+            return res.redirect('/user/change-password?message=All password fields are required.&type=error')
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            console.log('Password do not match.');
+            return res.redirect('/user/change-password?message=Password do not match.&type=error')
+        }
+
+        const user = await User.findOne({ email })
+        if (!user) {
+            console.log('user is not found');
+            return res.redirect('/user/change-password?message=User is not found.')
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password)
+        if (!isMatch) {
+            console.log('Incorrect password ');
+            return res.redirect('/user/change-password?message=Incorrect password.&type=error')
+        }
+
+        const isSamePassword = await bcrypt.compare(newPassword, user.password)
+        if (isSamePassword) {
+            console.log();
+            return res.redirect('/user/change-password?message=New password cannot be the same as your current password.&type=error')
+        }
+
+        const otp = generateOtp()
+        console.log('OTP : ', otp);
+
+        const sentMail = await sendVerifyMail(email, otp)
+        console.log('Mail sent: ', sentMail);
+        if (!sentMail) {
+            console.log('Mail send : ', sendMail);
+        }
+
+        req.session.userData = email
+        req.session.userOtp = otp
+        req.session.newPassword = newPassword
+
+        return res.redirect('/user/verify-change-pass-otp?message=Enter your OTP.&type=success')
+
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+const loadChangePasswordOtpPage = async (req, res) => {
+    try {
+        return res.render('change-pass-otp')
+    } catch (error) {
+
+    }
+}
+
+const verifyChangePass = async (req, res) => {
+    try {
+        const { otp } = req.body
+
+        if (otp === req.session.userOtp) {
+
+            const email = req.session.userData
+            console.log('email : ', email);
+            console.log('OTP : ',otp);
+            
+            const newPassword = req.session.newPassword
+            const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+            await User.updateOne({ email },
+                {
+                    $set: {
+                        password: hashedPassword
+                    }
+                }
+            )
+
+            return res.redirect('/user/change-password?message=Password changed successfully.&type=success')
+
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const resendChangePassOtp = async (req, res) => {
+    try {
+        const email = req.session.userData
+        console.log('EMAIL : ', email);
+
+        const otp = generateOtp()
+        console.log('OTP : ', otp);
+
+        const sendMail = await sendVerifyMail(email, otp)
+        if (!sendMail) {
+            console.log('Can not send otp to mail');
+            return res.status(500).json({
+                success: false,
+                message: 'Cannot send OTP to your email. Please try again later.'
+            })
+        }
+
+        req.session.userOtp = otp
+
+        return res.status(200).json({
+            success: true,
+            message: 'OTP resend successfully.'
+        })
+
+
+    } catch (error) {
+        console.log(error);
+
+    }
+
+}
 const logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -325,4 +446,9 @@ module.exports = {
     resendSignupOtp,
     login,
     logout,
+    loadChangePasswordPage,
+    changePassword,
+    loadChangePasswordOtpPage,
+    verifyChangePass,
+    resendChangePassOtp
 }

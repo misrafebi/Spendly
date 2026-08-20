@@ -19,7 +19,11 @@ router.get('/verify-signup-otp',userConteroller.loadSignupOtpPage)
 router.post('/verify-signup-otp',userConteroller.verifySignupOtp)
 router.post('/resend-signup-otp',userConteroller.resendSignupOtp)
 
-router.get('/change-password')
+router.get('/change-password',auth.noCache,auth.isLogin,userConteroller.loadChangePasswordPage)
+router.post('/change-password',auth.noCache,auth.isLogin,userConteroller.changePassword)
+router.get('/verify-change-pass-otp',userConteroller.loadChangePasswordOtpPage)
+router.post('/verify-change-pass-otp',userConteroller.verifyChangePass)
+router.post('/resend-change-pass-otp',userConteroller.resendChangePassOtp)
 
 router.get('/category', auth.noCache, auth.isLogin, categoryController.laodCategoryPage)
 router.get('/transaction', auth.noCache, auth.isLogin, transactionController.loadTransactionPage)

@@ -55,27 +55,31 @@
       position: relative;
       cursor: pointer;
     }
+
     .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: white;
-    min-width: 120px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
- .dropdown-menu a {
-    display: block;
-    padding: 10px;
-    text-decoration: none;
-    color: black;
-}
-.dropdown-menu a:hover {
-    background-color: #f2f2f2;
-}
-.dropdown-menu.show {
-    display: block;
-}
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: white;
+      min-width: 120px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      color: black;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f2f2f2;
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
   </style>
 </head>
 
@@ -99,9 +103,9 @@
 
     <script>
       const dropdownArrow = document.getElementById("dropdownArrow");
-const dropdownMenu = document.getElementById("dropdownMenu");
+      const dropdownMenu = document.getElementById("dropdownMenu");
 
-dropdownArrow.addEventListener("click", () => {
-    dropdownMenu.classList.toggle("show");
-});
+      dropdownArrow.addEventListener("click", () => {
+        dropdownMenu.classList.toggle("show");
+      });
     </script>
