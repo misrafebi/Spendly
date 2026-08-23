@@ -465,7 +465,7 @@ const verifyForgotMail = async (req, res) => {
 
         req.session.userOtp = otp
         req.session.userData = email
-        req.session.otpExiry = Date.now() + 30 * 1000
+        // req.session.otpExiry = Date.now() + 30 * 1000
 
         console.log('verify forgot mail fucion ended....');
 
@@ -499,11 +499,11 @@ const verifyForgotOtp = async (req, res) => {
         console.log('Current time:', Date.now())
         console.log('Expiry:', req.session.otpExpiry)
 
-        const isOtpValid = otp === req.session.userOtp && Date.now() < req.session.otpExiry
+        // const isOtpValid = otp === req.session.userOtp && Date.now() < req.session.otpExiry
 
-        // if (otp === req.session.userOtp) {
+        if (otp === req.session.userOtp) {
             
-        if (isOtpValid) {
+        // if (isOtpValid) {
             return res.redirect('/user/forgot-reset-pass')
         } else {
             return res.redirect('/user/verify-forgot-otp?message=Invalid OTP.&type=error')
