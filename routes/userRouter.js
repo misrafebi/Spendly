@@ -25,6 +25,14 @@ router.get('/verify-change-pass-otp',userConteroller.loadChangePasswordOtpPage)
 router.post('/verify-change-pass-otp',userConteroller.verifyChangePass)
 router.post('/resend-change-pass-otp',userConteroller.resendChangePassOtp)
 
+router.get('/forgot-email',userConteroller.loadForgotMailPage)
+router.post('/forgot-email',userConteroller.verifyForgotMail)
+router.get('/verify-forgot-otp',userConteroller.loadForgotOtpPage)
+router.post('/verify-forgot-otp',userConteroller.verifyForgotOtp)
+router.post('/resend-forgot-otp',userConteroller.resendForgotOtp)
+router.get('/forgot-reset-pass',userConteroller.loadResetForgotPassPage)
+router.post('/forgot-reset-pass',userConteroller.resetForgotPass)
+
 router.get('/category', auth.noCache, auth.isLogin, categoryController.laodCategoryPage)
 router.get('/transaction', auth.noCache, auth.isLogin, transactionController.loadTransactionPage)
 

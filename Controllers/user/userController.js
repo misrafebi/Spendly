@@ -118,7 +118,9 @@ async function sendVerifyMail(email, otp) {
             text: `Your OTP is ${otp}`,
             html: `<b>Your OTP is ${otp}</b>`
         })
-        console.log(info);
+
+        console.log('Mail sent successfully:', info.messageId)
+        // console.log(info);
 
         return true
 
@@ -370,8 +372,8 @@ const verifyChangePass = async (req, res) => {
 
             const email = req.session.userData
             console.log('email : ', email);
-            console.log('OTP : ',otp);
-            
+            console.log('OTP : ', otp);
+
             const newPassword = req.session.newPassword
             const hashedPassword = await bcrypt.hash(newPassword, 10)
 
@@ -423,6 +425,163 @@ const resendChangePassOtp = async (req, res) => {
     }
 
 }
+
+///// FORGOT PASSWORD
+
+const loadForgotMailPage = async (req, res) => {
+    try {
+        res.render('forgot-email')
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+const verifyForgotMail = async (req, res) => {
+    try {
+        const { email } = req.body
+        if (!email) {
+            return res.redirect('/user/forgot-email?message=Email is required.&type=error')
+        }
+        req.session.userData = email
+
+        const user = await User.findOne({ email })
+        if (!user) {
+            console.log('User not found');
+            return res.redirect('/user/forgot-email?message=Can not found user.&type=error')
+        }
+
+        const otp = generateOtp()
+        console.log("OTP : ", otp);
+
+        console.log("EMAIL : ", email);
+
+        const sendMail = await sendVerifyMail(email, otp)
+        console.log('Send Mail : ', sendMail);
+        if (!sendMail) {
+            return res.redirect('/user/forgot-email?message=Failed to send OTP. Please try again later.&type=error')
+
+        }
+
+        req.session.userOtp = otp
+        req.session.userData = email
+        req.session.otpExiry = Date.now() + 30 * 1000
+
+        console.log('verify forgot mail fucion ended....');
+
+
+        return res.redirect('/user/verify-forgot-otp?message=Enter your OTP.&type=success')
+
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+const loadForgotOtpPage = async (req, res) => {
+    try {
+        return res.render('forgot-pass-otp')
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+const verifyForgotOtp = async (req, res) => {
+    console.log('entered into verify forgot otp page....');
+
+    try {
+        console.log('...........');
+
+        const { otp } = req.body
+       console.log('Entered OTP:', otp)
+        console.log('Session OTP:', req.session.userOtp)
+        console.log('Current time:', Date.now())
+        console.log('Expiry:', req.session.otpExpiry)
+
+        const isOtpValid = otp === req.session.userOtp && Date.now() < req.session.otpExiry
+
+        // if (otp === req.session.userOtp) {
+            
+        if (isOtpValid) {
+            return res.redirect('/user/forgot-reset-pass')
+        } else {
+            return res.redirect('/user/verify-forgot-otp?message=Invalid OTP.&type=error')
+        }
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+const resendForgotOtp = async (req, res) => {
+    try {
+
+        const email = req.session.userData
+        const otp = generateOtp()
+        console.log('SESSION EMAIL : ', email);
+        console.log(' New OTP : ', otp);
+
+        const sendMail = await sendVerifyMail(email, otp)
+        console.log('Sent Mail : ', sendMail);
+        if (!sendMail) {
+            return res.status(500).json({
+                success: false,
+                message: 'Can not send OTP to your email. Please try again later.'
+            })
+        }
+
+        req.session.userOtp = otp
+
+        return res.status(200).json({
+            success: true,
+            message: 'Enter Your OTP.'
+        })
+
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+const loadResetForgotPassPage = async (req, res) => {
+    try {
+        res.render('forgot-reset-pass')
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+const resetForgotPass = async (req, res) => {
+    try {
+        const { newPassword, confirmPassword } = req.body
+
+        if (!newPassword || !confirmPassword) {
+            return res.redirect('/user/forgot-reset-pass?message=Password can not empty.&type=error')
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.redirect('/user/forgot-reset-pass?message=Password not match.&type=error')
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+        const email = req.session.userData
+        const user = await User.findOne({ email })
+        if (!user) {
+            console.log('User not found');
+            return res.redirect('/user/forgot-reset-pass?message=User not found.&type=error')
+        }
+
+        await User.updateOne({ email }, { $set: { password: hashedPassword } })
+
+        return res.redirect('/user/dashboard?message=Password updated successfully.&type=success')
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+///////LOGOUT
 const logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -450,5 +609,12 @@ module.exports = {
     changePassword,
     loadChangePasswordOtpPage,
     verifyChangePass,
-    resendChangePassOtp
+    resendChangePassOtp,
+    loadForgotMailPage,
+    verifyForgotMail,
+    loadForgotOtpPage,
+    verifyForgotOtp,
+    resendForgotOtp,
+    loadResetForgotPassPage,
+    resetForgotPass
 }

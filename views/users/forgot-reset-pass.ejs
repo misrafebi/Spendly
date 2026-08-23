@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .reset-password-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .reset-password-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .reset-password-container .form-group {
+            margin-bottom: 15px;
+        }
+
+        .reset-password-container .btn {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+        <br><br><br>
+        <div class="container">
+            <div class="reset-password-container">
+                <h2>Reset Password</h2>
+                <form action="/user/forgot-reset-pass" method="post" id="resetForm">
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" placeholder="Enter new password"
+                            name="newPassword">
+                        <div class="text-danger" id="newPassword-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword"
+                            placeholder="Confirm new password" name="confirmPassword">
+                        <div class="text-danger" id="confirmPassword-error"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Signup</button>
+                </form>
+            </div>
+            <br>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            <script>
+                const resetForm = document.getElementById('resetForm')
+
+                const newPassword = document.getElementById('newPassword')
+                const confirmPassword = document.getElementById('confirmPassword')
+
+                const newPasswordError = document.getElementById('newPassword-error')
+                const confirmPasswordError = document.getElementById('confirmPassword-error')
+
+                function passwordValidationChecking(isValid) {
+                    const newPasswordVal = newPassword.value;
+                    const confirmPasswordVal = confirmPassword.value
+
+                    const alpha = /[a-zA-Z]/
+                    const digit = /\d/
+
+                    if (!newPasswordVal) {
+                        newPasswordError.textContent = 'New password can not be empty'
+                        isValid = false
+                    } else if (newPasswordVal.length < 8) {
+                        newPasswordError.textContent = 'Password should contain at least 8 character.'
+                        isValid = false
+                    } else if (!alpha.test(newPasswordVal) || !digit.test(newPasswordVal)) {
+                        newPasswordError.textContent = 'Password should contain both numbers and alphabests.'
+                        isValid = false
+                    } else if (!confirmPasswordVal) {
+                        confirmPasswordError.textContent = 'Confirm password can not be empty.'
+                        isValid = false
+                    } else if (newPasswordVal !== confirmPasswordVal) {
+                        confirmPasswordError.textContent = 'Passwords do not match. Please re-enter them.'
+                        isValid = false
+                    } else {
+                        newPasswordError.textContent = ''
+                        confirmPasswordError.textContent = ''
+                        isValid = true
+                    }
+
+                    return isValid
+                }
+
+                resetForm.addEventListener('submit', function (event) {
+                    event.preventDefault()
+
+                    let isValid = true
+
+                    isValid = passwordValidationChecking(isValid)
+
+                    if (isValid) {
+                        this.submit()
+                    }
+                })
+
+            </script>
+
+           
+
+                    <script>
+                        const urlparams = new URLSearchParams(window.location.search)
+                        const message = urlparams.get('message')
+                        if (message) {
+                            alert(message)
+                        }
+                    </script>
+</body>
+
+</html>
