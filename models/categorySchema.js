@@ -23,6 +23,6 @@ const categorySchema = new Schema({
         default: null // null = admin-created, visible to every user
     }
 })
-
+ 
 const Category = mongoose.model('Category', categorySchema);
 module.exports = Category;

@@ -387,6 +387,8 @@ const verifyChangePass = async (req, res) => {
 
             return res.redirect('/user/change-password?message=Password changed successfully.&type=success')
 
+        } else {
+            return res.redirect('/user/verify-change-pass-otp?message=Invalid OTP.&type=error')
         }
 
     } catch (error) {
@@ -494,7 +496,7 @@ const verifyForgotOtp = async (req, res) => {
         console.log('...........');
 
         const { otp } = req.body
-       console.log('Entered OTP:', otp)
+        console.log('Entered OTP:', otp)
         console.log('Session OTP:', req.session.userOtp)
         console.log('Current time:', Date.now())
         console.log('Expiry:', req.session.otpExpiry)
@@ -502,8 +504,8 @@ const verifyForgotOtp = async (req, res) => {
         // const isOtpValid = otp === req.session.userOtp && Date.now() < req.session.otpExiry
 
         if (otp === req.session.userOtp) {
-            
-        // if (isOtpValid) {
+
+            // if (isOtpValid) {
             return res.redirect('/user/forgot-reset-pass')
         } else {
             return res.redirect('/user/verify-forgot-otp?message=Invalid OTP.&type=error')
