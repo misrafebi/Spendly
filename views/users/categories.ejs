@@ -164,6 +164,33 @@
             background: #f1f1f1;
             color: #333;
         }
+
+        /* edit category */
+        /* .edit-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-modal-overlay.active {
+            display: flex;
+        }
+
+        .edit-modal-box {
+            background: #fff;
+            width: 380px;
+            max-width: 90%;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        } */
     </style>
 </head>
 
@@ -188,8 +215,11 @@
                                 <td>
                                     <%=cat.name%>
                                 </td>
-                                <td style="text-align:right;"><span style="color:#2d6cdf;">Edit</span> &nbsp; <span
-                                        style="color:#d64545;">Delete</span></td>
+                                <td style="text-align:right;"><span style="color:#2d6cdf;" data-id="<%=cat._id%>"
+                                        data-name="<%=cat.name%>" data-type="<%=cat.type%>" class="edit-cat">Edit</span>
+                                    &nbsp;
+                                    <span style="color:#d64545;">Delete</span>
+                                </td>
                             </tr>
                             <%})%>
                     </table>
@@ -205,8 +235,11 @@
                                 <td>
                                     <%=cat.name%>
                                 </td>
-                                <td style="text-align:right;"><span style="color:#2d6cdf;">Edit</span> &nbsp; <span
-                                        style="color:#d64545;">Delete</span></td>
+                                <td style="text-align:right;"><span style="color:#2d6cdf;" data-id="<%=cat._id%>"
+                                        data-name="<%=cat.name%>" data-type="<%=cat.type%>" class="edit-cat">Edit</span>
+                                    &nbsp;
+                                    <span style="color:#d64545;">Delete</span>
+                                </td>
                             </tr>
                             <%})%>
                     </table>
@@ -253,10 +286,53 @@
         </div>
         <!-- --------------- -->
 
+        <!-- -------- EDIT CATEGORY MODAL --------- -->
+        <div id="editCategoryOverlay" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <div class="modal-title">EDIT CATEGORY</div>
+                    <span id="closeEditCategoryBtn">&times;</span>
+                </div>
+
+                <form id="editCategoryForm">
+                    <div class="form-group">
+                        <label for="editCategoryName">Category Name</label>
+                        <input type="text" name="editCategoryName" id="editCategoryName">
+                        <div class="text-danger" id="edit-cat-name-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="">Type</label>
+                        <div style="display:flex;gap:20px;margin-top:6px;">
+                            <label for="" style="font-weight:400;display:flex;align-items:center;gap:6px;">
+                                <input type="radio" name="editCategoryType" id="edit-incomeRadioBtn" value="income">
+                                Income
+                            </label>
+                            <label for="" style="font-weight:400;display:flex;align-items:center;gap:6px;">
+                                <input type="radio" name="editCategoryType" id="edit-expenseRadioBtn" value="expense">
+                                Expense
+                            </label>
+                        </div>
+                        <div class="text-danger" id="edit-cat-type-error"></div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <div class="btn btn-secondary" id="cancelEditCategoryBtn">Cancel</div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- ------------- -->
+
+
+
 
         </div>
         </div>
 
+
+        <!-- ------- ADD CATEGORY --------- -->
         <script>
             const openBtn = document.getElementById('openAddCategoryBtn');
             const closeBtn = document.getElementById('closeAddCategoryBtn');
@@ -279,24 +355,27 @@
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) closeModal();
             });
+            // if click modal-box e.target===overlay is false
+            // if click background of modal-box e.target===overlay is true therefor closeModal() runs
 
             form.addEventListener('submit', async function (e) {
-                // e.preventDefault();
-                const formData = new FormData(form);
+
+                const formData = new FormData(form); // create new object from form
                 const payload = {
-                    name: formData.get('categoryName'),
+                    name: formData.get('categoryName'), // access date
                     type: formData.get('categoryType')
                 };
+
                 try {
                     const res = await fetch('/user/category/add', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify(payload)  // strigfy the object inot JSON format
                     });
-                    const data = await res.json();
+                    const data = await res.json(); //JSON -> JS Object:[ covert server's reponse into object (server sends response in json format , it convert into js object)]
 
                     if (data.success) {
-                        location.reload(); // simplest way to refresh the lists
+                       return location.reload(); // simplest way to refresh the lists
                     } else {
                         alert(data.message || 'Something went wrong');
                     }
@@ -307,6 +386,86 @@
             });
         </script>
 
+        <!-- ----- EDIT CATEGORY ------ -->
+        <script>
+            const editOpenBtn = document.querySelectorAll('.edit-cat');
+            const editCloseBtn = document.getElementById('closeEditCategoryBtn')
+            const editCancelBtn = document.getElementById('cancelEditCategoryBtn')
+            const editOverlay = document.getElementById('editCategoryOverlay')
+            const editForm = document.getElementById('editCategoryForm')
+
+            const editNameInput = document.getElementById('editCategoryName');
+            const editIncomeRadio = document.getElementById('edit-incomeRadioBtn');
+            const editExpenseRadio = document.getElementById('edit-expenseRadioBtn');
+            const nameError = document.getElementById('edit-cat-name-error');
+            const typeError = document.getElementById('edit-cat-type-error')
+
+            let currentEditId = null
+
+            editOpenBtn.forEach(btn => {
+                btn.addEventListener('click', () => openModal(btn));
+            })
+
+            // editOpenBtn.addEventListener('click', openModal)
+            editCloseBtn.addEventListener('click', closeModal)
+            editCancelBtn.addEventListener('click', closeModal)
+
+            function openModal(btn) {
+                currentEditId = btn.dataset.id
+                editNameInput.value = btn.dataset.name
+                editIncomeRadio.checked = btn.dataset.type === 'income'
+                editExpenseRadio.checked = btn.dataset.type === 'expense'
+                editOverlay.classList.add('active');
+            }
+            function closeModal() {
+                editOverlay.classList.remove('active');
+                editForm.reset();
+                currentEditId = null
+            }
+
+            editOverlay.addEventListener('click', (e) => {
+                if (e.target === editOverlay) closeModal()
+            })
+
+            editForm.addEventListener('submit', async function (e) {
+
+                if (!currentEditId) {
+                    alert('No category selected for editing.')
+                    return
+                }
+
+                const formData = new FormData(editForm)
+
+                const payload = {
+                    name: formData.get('editCategoryName'),
+                    type: formData.get('editCategoryType')
+                }
+
+                try {
+                    const res = await fetch(`/user/category/edit/${currentEditId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+
+                    const data = res.json()
+
+                    if (data.success) {
+                       return location.reload()
+                    } else {
+                       return alert(data.message || 'Something went wrong')
+                    }
+                } catch (error) {
+                    console.error(err);
+                    alert('Failed to add category');
+                }
+            })
+        </script>
+
+
+        <!-- ------ ADD CATEGORY FRONT END VALIDATION ------ -->
         <script>
             const addForm = document.getElementById('addCategoryForm')
 
@@ -345,6 +504,57 @@
                 }
             })
         </script>
+
+        <!-- ------- EDIT CATEGORY FRONT-END VALIDATION ------ -->
+        <script>
+            const editform = document.getElementById('editCategoryForm')
+
+            function editFormValidation(isValid) {
+                const editCatName = document.getElementById('editCategoryName')
+                const editIncRadioBtn = document.getElementById('edit-incomeRadioBtn')
+                const editExpRadioBtn = document.getElementById('edit-expenseRadioBtn')
+
+                const editNameVal = editCatName.value
+
+                const editNameError = document.getElementById('edit-cat-name-error')
+                const editRadioError = document.getElementById('edit-cat-type-error')
+
+                if (!editNameVal) {
+                    editNameError.textContent = 'Name field required.'
+                    isValid = false
+                } else if (!editIncRadioBtn.checked && !editExpRadioBtn.checked) {
+                    editRadioError.textContent = 'Type field requiered.'
+                    isValid = false
+                } else {
+                    editNameError.textContent = ''
+                    editRadioError.textContent = ''
+                    isValid = true
+                }
+                return isValid
+            }
+
+            editForm.addEventListener('submit', function (e) {
+                e.preventDefault()
+
+                let isValid = true
+                isValid = editFormValidation(isValid)
+
+                if (isValid) {
+                    editform.submit()
+                }
+            })
+        </script>
+
+        <!-- ------ MESSAGE ------ -->
+        <script>
+            const urlParams = new URLSearchParams(window.location.search)
+            const message = urlParams.get('message')
+
+            if (message) {
+                alert(message)
+            }
+        </script>
+
 
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         </body>

@@ -16,16 +16,12 @@ const laodCategoryPage = async (req, res) => {
         const categories = await Category.find({
             $or: [{ User: null }, { User: user._id }]
         }).sort({ createdOn: -1 })
-        console.log('categories : ', categories);
-
-        const incomeCategories=categories.filter(cat=> cat.type==='income')
-        const expenseCategories=categories.filter(cat=>cat.type==='expense')
-        console.log("INCOME CATEGORIES  : ",incomeCategories);
-console.log('EXPENSE CATEGORIES : ',expenseCategories);
-        
 
 
-        res.render('categories', {
+        const incomeCategories = categories.filter(cat => cat.type === 'income')
+        const expenseCategories = categories.filter(cat => cat.type === 'expense')
+
+       return res.render('categories', {
             activePage: 'category',
             user,
             categories
@@ -83,8 +79,68 @@ const addCategory = async (req, res) => {
     }
 }
 
+// edit category
+    const editCategory = async (req, res) => {
+        try {
+            const { id } = req.params
+
+            const { name, type } = req.body
+
+            const email = req.session.userData
+
+            const user = await User.findOne({ email })
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found.'
+                })
+            }
+
+            const category = await Category.findById(id)
+            if (!category) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Category not found.'
+                })
+            }
+
+            if (!category.User || category.User.toString() !== user._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'You can not edit this category.'
+                })
+            }
+            
+            const duplicate = await Category.findOne({
+                _id: { $ne: id },
+                name: { $regex: `^${name.trim()}$`, $options: 'i' },
+                $or: [{ User: null }, { User: user._id }]
+            });
+
+            if(duplicate) {
+                console.log('Duplicate category');
+                return res.status(409).json({
+                    success: false,
+                    message: `You already have category named: "${name}`
+                })          
+            }
+
+            category.name = name
+            category.type = type
+            await category.save()
+
+    return res.redirect('/user/category')
+
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+
+
 
 module.exports = {
     laodCategoryPage,
-    addCategory
+    addCategory,
+    editCategory
 }
