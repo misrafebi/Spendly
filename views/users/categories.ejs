@@ -164,33 +164,6 @@
             background: #f1f1f1;
             color: #333;
         }
-
-        /* edit category */
-        /* .edit-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .edit-modal-overlay.active {
-            display: flex;
-        }
-
-        .edit-modal-box {
-            background: #fff;
-            width: 380px;
-            max-width: 90%;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        } */
     </style>
 </head>
 
@@ -218,7 +191,7 @@
                                 <td style="text-align:right;"><span style="color:#2d6cdf;" data-id="<%=cat._id%>"
                                         data-name="<%=cat.name%>" data-type="<%=cat.type%>" class="edit-cat">Edit</span>
                                     &nbsp;
-                                    <span style="color:#d64545;">Delete</span>
+                                    <span style="color:#d64545;" data-id="<%=cat._id%>" class="delete-cat">Delete</span>
                                 </td>
                             </tr>
                             <%})%>
@@ -238,15 +211,46 @@
                                 <td style="text-align:right;"><span style="color:#2d6cdf;" data-id="<%=cat._id%>"
                                         data-name="<%=cat.name%>" data-type="<%=cat.type%>" class="edit-cat">Edit</span>
                                     &nbsp;
-                                    <span style="color:#d64545;">Delete</span>
+                                    <span style="color:#d64545;" data-id="<%=cat._id%>" class="delete-cat">Delete</span>
                                 </td>
                             </tr>
-                            <%})%>
+                            <%})%>  
                     </table>
 
                 </div>
             </div>
         </div>
+
+        <!-- -------- DELETE CATEGORY --------- -->
+        <script>
+            const deleteBtns = document.querySelectorAll('.delete-cat')
+            deleteBtns.forEach((btn) => {
+                btn.addEventListener('click', () => deleteCat(btn))
+            })
+
+            function deleteCat(btn) {
+                let currentId = btn.dataset.id
+
+                if (!confirm(`Delete this category?`)) return
+
+                fetch(`/user/category/delete/${currentId}`, {   
+                    method: 'DELETE'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            btn.closest('tr').remove()
+                        } else {
+                            alert(data.message || 'Error deleting category.')
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert('Failed to delete category.');
+                    })
+            }
+        </script>
+        <!-- ------------- -->
 
 
         <!-- ---------- ADD CATEGORY MODAL ---------- -->
@@ -325,9 +329,6 @@
         </div>
         <!-- ------------- -->
 
-
-
-
         </div>
         </div>
 
@@ -370,12 +371,12 @@
                     const res = await fetch('/user/category/add', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)  // strigfy the object inot JSON format
+                        body: JSON.stringify(payload)  // strigfy the object into JSON format
                     });
                     const data = await res.json(); //JSON -> JS Object:[ covert server's reponse into object (server sends response in json format , it convert into js object)]
 
                     if (data.success) {
-                       return location.reload(); // simplest way to refresh the lists
+                        return location.reload(); // simplest way to refresh the lists
                     } else {
                         alert(data.message || 'Something went wrong');
                     }
@@ -453,9 +454,9 @@
                     const data = res.json()
 
                     if (data.success) {
-                       return location.reload()
+                        return location.reload()
                     } else {
-                       return alert(data.message || 'Something went wrong')
+                        return alert(data.message || 'Something went wrong')
                     }
                 } catch (error) {
                     console.error(err);

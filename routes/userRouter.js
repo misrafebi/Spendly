@@ -36,6 +36,7 @@ router.post('/forgot-reset-pass',userConteroller.resetForgotPass)
 router.get('/category', auth.noCache, auth.isLogin, categoryController.laodCategoryPage)
 router.post('/category/add',categoryController.addCategory)
 router.patch('/category/edit/:id', categoryController.editCategory)
+router.delete('/category/delete/:id',categoryController.deleteCategory)
 
 router.get('/transaction', auth.noCache, auth.isLogin, transactionController.loadTransactionPage)
 
