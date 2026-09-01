@@ -7,7 +7,7 @@ const laodCategoryPage = async (req, res) => {
     try {
         const email = req.session.userData
 
-        const user = await User.findOne({ email })
+        const user = await User.findOne({ email }) 
         console.log('user: ', user);
         if (!user) {
             return res.redirect('/user/dashboard?message=User not found.&type=error')
@@ -168,7 +168,6 @@ const deleteCategory = async (req, res) => {
         
         const category = await Category.findById(id)
         if (!category) {
-            console.log('.............');          
             return res.status(404).json({
                 success: false,
                 message: 'Category not found.'
@@ -176,7 +175,7 @@ const deleteCategory = async (req, res) => {
         }
         
         if(!category.User || category.User.toString()!==user._id.toString()){
-            return res.json(403).json({
+            return res.status(403).json({
                 success:false,
                 message:'You can not delete this category.'
             })
