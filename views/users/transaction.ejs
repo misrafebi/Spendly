@@ -230,6 +230,84 @@
       color: #d64545;
       margin-left: 12px;
     }
+
+    /* EDIT MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      width: 380px;
+      max-width: 90%;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      cursor: pointer;
+      font-size: 20px;
+      color: #888;
+      line-height: 1;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-secondary {
+      background: #f1f1f1;
+      color: #333;
+    }
   </style>
 </head>
 
@@ -320,13 +398,263 @@
                                 <td class="amount-cell expense">-₹<%=tnstn.amount%>
                                 </td>
                                 <%}%>
-                                  <td class="row-actions"><span class="edit">Edit</span><span
-                                      class="delete">Delete</span>
+                                  <td class="row-actions"><span class="edit edit-transaction" data-id="<%=tnstn._id%>"
+                                      data-amount="<%=tnstn.amount%>" data-type="<%=tnstn.type%>"
+                                      data-category="<%=tnstn.category?tnstn.category.name:''%>"
+                                      data-date="<%=tnstn.date.toISOString().split('T')[0]%>"
+                                      data-note="<%=tnstn.note || ''%>">Edit</span>
+                                    <span data-id="<%=tnstn._id%>" class="delete">Delete</span>
                                   </td>
               </tr>
               <%})%>
 
           </table>
+
+          <!-- ------ DELETE TRANSACTION ----- -->
+          <script>
+            const deleteBtns = document.querySelectorAll('.delete')
+            deleteBtns.forEach((btn) => {
+              btn.addEventListener('click', () => deleteTransaction(btn))
+            })
+
+            function deleteTransaction(btn) {
+              let currentId = btn.dataset.id
+              if (!confirm('Delete this transaction.')) return
+
+              fetch(`/user/transaction/delete/${currentId}`, {
+                method: 'DELETE'
+              })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                    btn.closest('tr').remove()
+                  } else {
+                    alert(data.message || 'Error deleting transaction.')
+                  }
+                })
+            }
+          </script>
+
+          <!-- --------- -->
+
+          <!-- ------ EDIT TRANSACTION MODAL ------ -->
+          <div id="edit-transaction-modal" class="modal-overlay">
+            <div class="modal-box">
+              <div class="modal-header">
+                <div class="modal-title">EDIT TRANSACTION</div>
+                <span id="edit-close">&times;</span>
+              </div>
+
+              <form id="edit-transaction-form">
+                <div class="form-group">
+                  <label for="edit-amount">Amount</label>
+                  <input type="text" name="amount" id="edit-amount">
+                  <div class="text-danger" id="edit-amount-error"></div>
+                </div>
+
+                <div class="form-group">
+
+                  <label for="edit-category">Categories</label>
+                  <select id="edit-category" name="category">
+                    <%categories.forEach(cat=>{%>
+                      <option value="<%=cat.name%>">
+                        <%=cat.name%>
+                      </option>
+                      <%})%>
+                  </select>
+                  <div class="text-danger" id="edit-category-error"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="edit-date">Date</label>
+                  <input type="date" name="date" id="edit-date">
+                  <div class="text-danger" id="edit-date-error"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="edit-note">Note</label>
+                  <input type="text" name="note" id="edit-note">
+                  <div class="text-danger" id="edit-note-error"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="">Type</label>
+                  <div style="display:flex;gap:20px;margin-top:6px;">
+                    <label for="edit-income" style="font-weight:400;display:flex;align-items:center;gap:6px;">
+                      <input type="radio" id="edit-income" value="income" name="editTransactionType">
+                      Income
+                    </label>
+                    <label for="edit-expense" style="font-weight:400;display:flex;align-items:center;gap:6px;">
+                      <input type="radio" id="edit-expense" value="expense" name="editTransactionType">
+                      Expense
+                    </label>
+                  </div>
+                  <div class="text-danger" id="type-error"></div>
+                </div>
+
+                <div class="modal-actions">
+                  <div id="edit-cancel-btn" class="btn btn-secondary">Cancel</div>
+                  <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- ------------- -->
+
+          <!-- ------- EDIT TRANSACTION ------ -->
+          <script>
+            const editOpenBtn = document.querySelectorAll('.edit-transaction')
+            const closeEditBtn = document.getElementById('edit-close')
+            const cancelEditBtn = document.getElementById('edit-cancel-btn')
+            const editOverlay = document.getElementById('edit-transaction-modal')
+            const editForm = document.getElementById('edit-transaction-form')
+
+            const editAmount = document.getElementById('edit-amount')
+            const editCatgory = document.getElementById('edit-category')
+            const editDate = document.getElementById('edit-date')
+            const editNote = document.getElementById('edit-note')
+            const editIncomeRadio = document.getElementById('edit-income')
+            const editExpenseRadio = document.getElementById('edit-expense')
+
+            const editAmountError = document.getElementById('edit-amount-error')
+            const editCategoryError = document.getElementById('edit-category-error')
+            const editDateError = document.getElementById('edit-date-error')
+            const editTypeError = document.getElementById('type-error')
+
+
+            let currentEditId = null
+            editOpenBtn.forEach(btn => {
+              btn.addEventListener('click', () => openModal(btn))
+            })
+
+            function openModal(btn) {
+              currentEditId = btn.dataset.id
+              editAmount.value = btn.dataset.amount
+              editCatgory.value = btn.dataset.category
+              editDate.value = btn.dataset.date
+              editNote.value = btn.dataset.note
+              editIncomeRadio.checked = btn.dataset.type === 'income'
+              editExpenseRadio.checked = btn.dataset.type === 'expense'
+
+              editOverlay.classList.add('active')
+            }
+
+            closeEditBtn.addEventListener('click', closeModal)
+            cancelEditBtn.addEventListener('click', closeModal)
+            function closeModal() {
+              editOverlay.classList.remove('active')
+              editForm.reset()
+              currentEditId = null
+            }
+
+            editOverlay.addEventListener('click', (e) => {
+              if (e.target === editOverlay) closeModal()
+            })
+
+            editForm.addEventListener('submit', async function (e) {
+              if (!currentEditId) return alert('No category selected.')
+
+              const formData = new FormData(editForm)
+
+              const payload = {
+                amount: formData.get('amount'),
+                category: formData.get('category'),
+                date: formData.get('date'),
+                note: formData.get('note'),
+                type: formData.get('editTransactionType')
+              }
+
+              try {
+                const res = await fetch(`/user/transaction/edit/${currentEditId}`, {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(payload)
+                })
+
+                const data = await res.json()
+
+                if (date.success) {
+                  location.reload()
+                } else {
+                  alert(data.message)
+                }
+              } catch (error) {
+                console.error('Failed to edit transaction.', error);
+              }
+            })
+
+            // FRONT END VALIDATION EDIT TRANSACTION
+            editForm.addEventListener('submit', function (e) {
+              e.preventDefault()
+
+              let isValid = true
+
+              isValid = amountValidation(isValid)
+              isValid = categoryValidation(isValid)
+              isValid = dateValidation(isValid)
+              isValid = typeValidation(isValid)
+
+              if (isValid) {
+                editForm.submit()
+              }
+            })
+
+            function amountValidation(isValid) {
+              const amountVal = editAmount.value
+
+              if (!amountVal) {
+                editAmountError.textContent = 'Amount Field is required.'
+                isValid = false
+              } else if (isNaN(amountVal)) {
+                editAmountError.textContent = 'Amount must be a number.'
+                isValid = false
+              } else {
+                editAmountError.textContent = ''
+              }
+              return isValid
+            }
+
+            function categoryValidation(isValid) {
+              const categoryVal = editCatgory.value
+              if (!categoryVal) {
+                editCategoryError.textContent = 'Categry Field is required.'
+                isValid = false
+              } else {
+                editCategoryError.textContent = ''
+              }
+              return isValid
+            }
+
+            function dateValidation(isValid) {
+              const dateVal = editDate.value
+              if (!dateVal) {
+                editDateError.textContent = 'Date field is required.'
+                isValid = false
+              } else {
+                editDateError.textContent = ''
+              }
+              return isValid
+            }
+
+            function typeValidation(isValid) {
+              if (!editIncomeRadio.checked && !editExpenseRadio.checked) {
+                editTypeError.textContent = 'Type field is reqiured.'
+                isValid = false
+              } else {
+                editTypeError.textContent = ''
+              }
+              return isValid
+            }
+
+          </script>
+          <!-- -------------- -->
+
+          <!-- ------ FRONT END VALIDATION EDIT TRANSACTION -------- -->
+
+          <!-- -------------- -->
+
         </div>
       </div>
 
@@ -360,7 +688,7 @@
       </script>
 
 
-      <!-- ------ FRONT END VALIDATION ------ -->
+      <!-- ------ FRONT END VALIDATION FOR ADD TRANSACTION ------ -->
       <!-- <script>
         const form = document.getElementById('add-form')
         const amount = document.getElementById('amount')

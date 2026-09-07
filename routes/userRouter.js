@@ -40,6 +40,8 @@ router.delete('/category/delete/:id',categoryController.deleteCategory)
 
 router.get('/transaction', auth.noCache, auth.isLogin, transactionController.loadTransactionPage)
 router.post('/transaction/add',transactionController.addTransaction)
+router.patch('/transaction/edit/:id',transactionController.editTransaction)
+router.delete('/transaction/delete/:id',transactionController.deleteTransaction)
 
 router.get('/logout',auth.noCache,auth.isLogin,userConteroller.logout)
 
