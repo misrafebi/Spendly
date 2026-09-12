@@ -7,6 +7,9 @@ const transactionController = require('../Controllers/user/transactionController
 const auth = require('../middlewares/userAuth')
 
 router.get('/dashboard', auth.noCache, auth.isLogin, dashboardController.loadDashBoard)
+router.get('/dashboard/monthly-summary',dashboardController.getMonthlySummary)
+router.get('/dashboard/category-summary',dashboardController.getCategorySummary)
+
 router.get('/page-not-found', userConteroller.loadPageNotFound)
 router.get('/about-us', auth.noCache, auth.isLogin, userConteroller.loadAboutUsPage)
 

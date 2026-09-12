@@ -113,22 +113,26 @@
                 <div class="stat-row">
                     <div class="stat-card income">
                         <div class="label">Total Income</div>
-                        <div class="value">₹42,000</div>
+                        <span class="value" id="totalIncome">₹0</span>
                     </div>
                     <div class="stat-card expense">
                         <div class="label">Total Expense</div>
-                        <div class="value">₹27,450</div>
+                        <span class="value" id="totalExpense">₹0</span>
                     </div>
                     <div class="stat-card balance">
                         <div class="label">Balance</div>
-                        <div class="value">₹14,550</div>
+                        <span class="value" id="totalBalance">₹0</span>
                     </div>
                 </div>
 
                 <div style="display:flex;gap:16px;">
                     <div class="card wf-box"
                         style="flex:1.3;height:270px;display:flex;align-items:center;justify-content:center;position:relative;">
-                        <div class="label-tag">Overview of this month — July 2026</div>
+                        <div class="label-tag">Overview of this month </div>
+                        <div style="position:relative;width:100%;height:220px;">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                       
                         <svg width="200" height="200" viewBox="0 0 42 42">
                             <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#eee" stroke-width="8"></circle>
                             <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#2d6cdf" stroke-width="8"
@@ -141,29 +145,56 @@
                                 stroke-dasharray="20 80" stroke-dashoffset="-55"></circle>
                         </svg>
                     </div>
+
+                     <script>
+                            fetch('/user/dashboard/category-summary')
+                                .then(res => res.json())
+                                .then(data => {
+                                    const ctx = document.getElementById('expenseChart').getContext('2d')
+                                    if (data.labels.length === 0) {
+                                        // no expenses yet this month — skip drawing, or show a placeholder message
+                                        return
+                                    }
+
+                                    new Chart(ctx, {
+                                        type: 'doughnut',
+                                        data: {
+                                            labels: data.labels,
+                                            dataset: [{
+                                                data: data.values,
+                                                backgroundColor: [
+                                                    '#2d6cdf', '#6fcf97', '#f2b84b', '#d64545',
+                                                    '#af7aa1', '#59a14f', '#edc949', '#4e79a7'
+                                                ],
+                                                borderWidth: 2
+                                            }]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            maintainAspectRatio: false,
+                                            plugins: {
+                                                legend: {
+                                                    position: 'bottom',
+                                                    labels: { boxWidth: 12, font: { size: 11 } }
+                                                }
+                                            }
+                                        }
+                                    })
+                                })
+                        </script>
+                        
                     <div class="card wf-box" style="flex:1;height:270px;position:relative;padding-top:26px;">
                         <div class="label-tag">Recent Transactions</div>
                         <table>
-                            <tr>
-                                <td>Groceries</td>
-                                <td style="text-align:right;color:#d64545;">-₹1,200</td>
-                            </tr>
-                            <tr>
-                                <td>Salary</td>
-                                <td style="text-align:right;color:#2f9e5e;">+₹42,000</td>
-                            </tr>
-                            <tr>
-                                <td>Electricity</td>
-                                <td style="text-align:right;color:#d64545;">-₹950</td>
-                            </tr>
-                            <tr>
-                                <td>Petrol</td>
-                                <td style="text-align:right;color:#d64545;">-₹800</td>
-                            </tr>
-                            <tr>
-                                <td>Internet</td>
-                                <td style="text-align:right;color:#d64545;">-₹699</td>
-                            </tr>
+                            <%recent.forEach(t=>{%>
+                                <tr>
+                                    <td>
+                                        <%=t.category.name%>
+                                    </td>
+                                    <td style="text-align:right;color:#d64545;">-₹<%=t.amount%>
+                                    </td>
+                                </tr>
+                                <%})%>
                         </table>
                     </div>
                 </div>
@@ -173,6 +204,16 @@
             </div>
 
             <script>
+                fetch('/user/dashboard/monthly-summary')
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById('totalIncome').textContent = '₹' + data.income
+                        document.getElementById('totalExpense').textContent = '₹' + data.expense
+                        document.getElementById('totalBalance').textContent = '₹' + data.balance
+                    })
+            </script>
+
+            <script>
                 const urlParams = new URLSearchParams(window.location.search)
                 const message = urlParams.get('message')
 
@@ -180,6 +221,7 @@
                     alert(message)
                 }
             </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 </body>
 
 </html>
